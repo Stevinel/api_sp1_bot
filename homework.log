@@ -1,7 +1,0 @@
-2020-12-26 23:47:28,024, INFO, root, Bot started work
-2020-12-26 23:47:28,261, DEBUG, telegram.bot, Entering: send_message
-2020-12-26 23:47:28,262, DEBUG, telegram.vendor.ptb_urllib3.urllib3.connectionpool, Starting new HTTPS connection (1): api.telegram.org
-2020-12-26 23:47:28,471, DEBUG, telegram.vendor.ptb_urllib3.urllib3.connectionpool, https://api.telegram.org:443 "POST /bot1498925443:AAHHNyIBOGuyvgxKLbntMq9WU7JT96wovAA/sendMessage HTTP/1.1" 200 739
-2020-12-26 23:47:28,474, DEBUG, telegram.bot, {'message_id': 158, 'date': 1609015649, 'chat': {'id': 394832402, 'type': 'private', 'username': 'MMMhlp', 'first_name': 'Стас'}, 'text': 'У вас проверили работу "Stevinel__api_01_sms.zip"!\n\nРевьюеру всё понравилось, можно приступать к следующему уроку.', 'entities': [], 'caption_entities': [], 'photo': [], 'new_chat_members': [], 'new_chat_photo': [], 'delete_chat_photo': False, 'group_chat_created': False, 'supergroup_chat_created': False, 'channel_chat_created': False, 'from': {'id': 1498925443, 'first_name': 'Study-project', 'is_bot': True, 'username': 'stevinelbot'}}
-2020-12-26 23:47:28,475, DEBUG, telegram.bot, Exiting: send_message
-2020-12-26 23:47:28,476, INFO, root, Message sent
