@@ -21,7 +21,8 @@ logger.addHandler(handler)
 
 
 PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN") or ""
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+print(TELEGRAM_TOKEN)
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 PRAKTIKUM_API_URL = (
     "https://praktikum.yandex.ru/api/user_api/homework_statuses/"
