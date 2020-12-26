@@ -22,13 +22,11 @@ logger.addHandler(handler)
 
 PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-print(TELEGRAM_TOKEN)
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 PRAKTIKUM_API_URL = (
     "https://praktikum.yandex.ru/api/user_api/homework_statuses/"
 )
-BOT_CLIENT = telegram.Bot(token=TELEGRAM_TOKEN)
-
+bot_client = None
 
 def parse_homework_status(homework):
     homework_name = homework["homework_name"]
@@ -46,7 +44,7 @@ def parse_homework_status(homework):
         logging.error(
             send_message(
                 "Значения status или home_work_name пусты или несоответствуют",
-                BOT_CLIENT,
+                bot_client,
             )
         )
 
@@ -73,6 +71,7 @@ def send_message(message, BOT_CLIENT):
 
 
 def main():
+    bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
     logging.info("Bot started work")
     while True:
@@ -81,7 +80,7 @@ def main():
             if new_homework.get("homeworks"):
                 send_message(
                     parse_homework_status(new_homework.get("homeworks")[0]),
-                    BOT_CLIENT,
+                    bot_client,
                 )
             current_timestamp = new_homework.get(
                 "current_date", current_timestamp
@@ -91,7 +90,7 @@ def main():
         except Exception as e:
             print(f"bot have a problem: {e}")
             logging.error(
-                send_message("creator, we have a problems", BOT_CLIENT)
+                send_message("creator, we have a problems", bot_client)
             )
             time.sleep(5)
 
