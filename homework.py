@@ -21,12 +21,12 @@ logger.addHandler(handler)
 
 
 PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or ""
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN") or ""
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 PRAKTIKUM_API_URL = (
     "https://praktikum.yandex.ru/api/user_api/homework_statuses/"
 )
-BOT_CLIENT = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
+BOT_CLIENT = telegram.Bot(token=TELEGRAM_TOKEN)
 
 
 def parse_homework_status(homework):
