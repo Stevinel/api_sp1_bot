@@ -76,7 +76,7 @@ def main():
     logging.info("Bot started work")
     while True:
         try:
-            new_homework = get_homework_statuses(0)
+            new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get("homeworks"):
                 send_message(
                     parse_homework_status(new_homework.get("homeworks")[0]),
