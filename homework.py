@@ -66,7 +66,7 @@ def send_message(message, BOT_CLIENT):
 
 def main():
     bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
-    # current_timestamp = int(time.time())
+    current_timestamp = int(time.time())
     logging.info("Bot started work")
     while True:
         try:
@@ -77,7 +77,7 @@ def main():
                     bot_client,
                 )
             current_timestamp = new_homework.get(
-                "current_date", current_timestamp, int(time.time())
+                "current_date", current_timestamp
             )
             logging.info("Trying to sent message")
             time.sleep(1200)
