@@ -20,50 +20,44 @@ handler = RotatingFileHandler("homework.log", maxBytes=50000000, backupCount=5)
 logger.addHandler(handler)
 
 
-PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 PRAKTIKUM_API_URL = (
-    "https://praktikum.yandex.ru/api/user_api/homework_statuses/"
+    'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 )
-bot_client = None
+
 
 def parse_homework_status(homework):
-    homework_name = homework["homework_name"]
-    try:
-        if homework["status"] == "reviewing":
-            verdict = "Работа взята в ревью."
-        elif homework["status"] == "rejected":
-            verdict = "К сожалению в работе нашлись ошибки."
-        else:
-            verdict = ('Ревьюеру всё понравилось,'
-            ' можно приступать к следующему уроку.')
-        return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-    except Exception as error:
-        print(f"bot have a problems with parse_hw_status: {error}")
-        logging.error(
-            send_message(
-                "Значения status или home_work_name пусты или несоответствуют",
-                bot_client,
-            )
-        )
-
+    homework_name = homework['homework_name']
+    if homework['status'] == 'reviewing':
+        verdict = 'Работа взята в ревью.'
+    elif homework['status'] == 'rejected':
+        verdict = "К сожалению в работе нашлись ошибки."
+    elif homework['status'] == 'approved':
+        verdict = ('Ревьюеру всё понравилось,'
+        ' можно приступать к следующему уроку.')
+    elif homework_name is None:
+        raise Exception('homework_name error')
+    else:
+        raise Exception('We have a problems with parse_hw_status')
+    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    
 
 def get_homework_statuses(current_timestamp):
+    current_timestamp = current_timestamp or int(time.time())
     headers = {"Authorization": f"OAuth {PRAKTIKUM_TOKEN}"}
     params = {
         "from_date": current_timestamp,
     }
-    if current_timestamp is None:
-        current_timestamp = int(time.time())
     try:
         homework_statuses = requests.get(
             PRAKTIKUM_API_URL, params=params, headers=headers
         )
-    except requests.RequestException as error:
-        return logging.error(error, exc_info=True)
-    else:
-        return homework_statuses.json()
+    except ValueError as e:
+        logging.error(f'Error: {e}') 
+        return {}
+    return homework_statuses.json()
 
 
 def send_message(message, BOT_CLIENT):
@@ -72,7 +66,7 @@ def send_message(message, BOT_CLIENT):
 
 def main():
     bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time())
+    # current_timestamp = int(time.time())
     logging.info("Bot started work")
     while True:
         try:
@@ -83,16 +77,16 @@ def main():
                     bot_client,
                 )
             current_timestamp = new_homework.get(
-                "current_date", current_timestamp
+                "current_date", current_timestamp, int(time.time())
             )
-            logging.info("Message sent")
+            logging.info("Trying to sent message")
             time.sleep(1200)
-        except Exception as e:
-            print(f"bot have a problem: {e}")
+        except Exception as error:
+            logger.error(error, exc_info=True)
             logging.error(
                 send_message("creator, we have a problems", bot_client)
             )
-            time.sleep(5)
+            time.sleep(300)
 
 
 if __name__ == "__main__":
