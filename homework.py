@@ -57,8 +57,8 @@ def get_homework_statuses(current_timestamp):
             PRAKTIKUM_API_URL, params=params, headers=headers
         )
         return homework_statuses.json()
-    except (requests.exceptions.RequestException, ValueError):
-        return {}
+    except (requests.exceptions.RequestException, ValueError): 
+        return {} 
 
 
 def send_message(message, BOT_CLIENT):
@@ -72,8 +72,8 @@ def main():
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
-            logging.info("Trying to sent message")
             if new_homework.get("homeworks"):
+                logging.info("Trying to sent message")
                 send_message(
                     parse_homework_status(new_homework.get("homeworks")[0]),
                     bot_client,
