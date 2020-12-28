@@ -20,29 +20,31 @@ handler = RotatingFileHandler("homework.log", maxBytes=50000000, backupCount=5)
 logger.addHandler(handler)
 
 
-PRAKTIKUM_TOKEN = os.getenv('PRAKTIKUM_TOKEN')
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 PRAKTIKUM_API_URL = (
-    'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+    "https://praktikum.yandex.ru/api/user_api/homework_statuses/"
 )
 
 
 def parse_homework_status(homework):
-    homework_name = homework['homework_name']
-    if homework['status'] == 'reviewing':
-        verdict = 'Работа взята в ревью.'
-    elif homework['status'] == 'rejected':
+    homework_name = homework["homework_name"]
+    homework_status = homework["status"]
+    if homework_name is None or homework_status is None:
+        return "problems with parse hw_status"
+    if homework_status == "reviewing":
+        verdict = "Работа взята в ревью."
+    elif homework_status == "rejected":
         verdict = "К сожалению в работе нашлись ошибки."
-    elif homework['status'] == 'approved':
-        verdict = ('Ревьюеру всё понравилось,'
-        ' можно приступать к следующему уроку.')
-    elif homework_name is None:
-        raise Exception('homework_name error')
+    elif homework_status == "approved":
+        verdict = (
+            "Ревьюеру всё понравилось," " можно приступать к следующему уроку."
+        )
     else:
-        raise Exception('We have a problems with parse_hw_status')
+        return "noname status"
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-    
+
 
 def get_homework_statuses(current_timestamp):
     current_timestamp = current_timestamp or int(time.time())
@@ -54,10 +56,13 @@ def get_homework_statuses(current_timestamp):
         homework_statuses = requests.get(
             PRAKTIKUM_API_URL, params=params, headers=headers
         )
-    except ValueError as e:
-        logging.error(f'Error: {e}') 
+        return homework_statuses.json()
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Ошибка: {e}")
         return {}
-    return homework_statuses.json()
+    except ValueError as e:
+        logging.error(f"Error: {e}")
+        return {}
 
 
 def send_message(message, BOT_CLIENT):
@@ -71,6 +76,7 @@ def main():
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
+            logging.info("Trying to sent message")
             if new_homework.get("homeworks"):
                 send_message(
                     parse_homework_status(new_homework.get("homeworks")[0]),
@@ -79,7 +85,7 @@ def main():
             current_timestamp = new_homework.get(
                 "current_date", current_timestamp
             )
-            logging.info("Trying to sent message")
+            logging.info("A request was made")
             time.sleep(1200)
         except Exception as error:
             logger.error(error, exc_info=True)
