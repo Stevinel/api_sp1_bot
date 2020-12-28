@@ -29,8 +29,8 @@ PRAKTIKUM_API_URL = (
 
 
 def parse_homework_status(homework):
-    homework_name = homework["homework_name"]
-    homework_status = homework["status"]
+    homework_name = homework.get("homework_name")
+    homework_status = homework.get("status")
     if homework_name is None or homework_status is None:
         return "problems with parse hw_status"
     if homework_status == "reviewing":
@@ -57,11 +57,7 @@ def get_homework_statuses(current_timestamp):
             PRAKTIKUM_API_URL, params=params, headers=headers
         )
         return homework_statuses.json()
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Ошибка: {e}")
-        return {}
-    except ValueError as e:
-        logging.error(f"Error: {e}")
+    except (requests.exceptions.RequestException, ValueError):
         return {}
 
 
