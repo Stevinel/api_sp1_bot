@@ -29,17 +29,18 @@ PRAKTIKUM_API_URL = (
 
 
 def parse_homework_status(homework):
-    homework_name = homework.get("homework_name")
-    homework_status = homework.get("status")
+    homework_name = homework.get('homework_name')
+    homework_status = homework.get('status')
     if homework_name is None or homework_status is None:
-        return "problems with parse hw_status"
-    if homework_status == "reviewing":
-        verdict = "Работа взята в ревью."
+        return 'problems with parse hw_status'
+    if homework_status == 'reviewing':
+        verdict = 'Работа взята в ревью.'
     elif homework_status == "rejected":
-        verdict = "К сожалению в работе нашлись ошибки."
+        verdict = 'К сожалению в работе нашлись ошибки.'
     elif homework_status == "approved":
         verdict = (
-            "Ревьюеру всё понравилось," " можно приступать к следующему уроку."
+            'Ревьюеру всё понравилось,'
+            ' можно приступать к следующему уроку.'
         )
     else:
         return "noname status"
@@ -48,17 +49,18 @@ def parse_homework_status(homework):
 
 def get_homework_statuses(current_timestamp):
     current_timestamp = current_timestamp or int(time.time())
-    headers = {"Authorization": f"OAuth {PRAKTIKUM_TOKEN}"}
+    headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     params = {
-        "from_date": current_timestamp,
+        'from_date': current_timestamp,
     }
     try:
         homework_statuses = requests.get(
             PRAKTIKUM_API_URL, params=params, headers=headers
         )
         return homework_statuses.json()
-    except (requests.exceptions.RequestException, ValueError): 
-        return {} 
+    except (requests.exceptions.RequestException, ValueError) as error:
+        logging.error(f'Error {error}')
+    return {} 
 
 
 def send_message(message, BOT_CLIENT):
@@ -72,21 +74,21 @@ def main():
     while True:
         try:
             new_homework = get_homework_statuses(current_timestamp)
-            if new_homework.get("homeworks"):
-                logging.info("Trying to sent message")
+            if new_homework.get('homeworks'):
+                logging.info('Trying to sent message')
                 send_message(
-                    parse_homework_status(new_homework.get("homeworks")[0]),
+                    parse_homework_status(new_homework.get('homeworks')[0]),
                     bot_client,
                 )
             current_timestamp = new_homework.get(
-                "current_date", current_timestamp
+                'current_date', current_timestamp
             )
-            logging.info("A request was made")
+            logging.info('A request was made')
             time.sleep(1200)
         except Exception as error:
             logger.error(error, exc_info=True)
             logging.error(
-                send_message("creator, we have a problems", bot_client)
+                send_message('creator, we have a problems', bot_client)
             )
             time.sleep(300)
 
