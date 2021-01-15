@@ -44,7 +44,7 @@ def parse_homework_status(homework):
         )
     else:
         return "noname status"
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    return f'Изменился статус работы. "{homework_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
