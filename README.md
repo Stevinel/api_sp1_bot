@@ -1,2 +1,3 @@
-telegram_bot
-This is helper-bot which monitor if a task was reviewed and if it was Fail or Pass.
+Личный бот-ассистент для Telegram для проверки домашних заданий в Яндекс Практикуме
+
+Работает на сервере Heroku
